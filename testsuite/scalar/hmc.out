@@ -1,0 +1,21 @@
+SU(2) with reduced staggered fermions
+Microcanonical simulation with refreshing
+Machine = Scalar processor, with 1 nodes
+Hybrid Monte Carlo algorithm
+Phi algorithm
+start: Thu Nov 10 17:49:36 2016
+
+type 0 for no prompts or 1 for prompts
+nx 1
+ny 16
+nz 16
+nt 16
+PBC -1
+iseed 41
+Nroot 1
+Norder 15
+Antiperiodic temporal boundary conditions
+LAYOUT = Hypercubes, options = hyper_prime,
+ON EACH NODE 1 x 16 x 16 x 16
+Mallocing 2.7 MBytes per core for lattice
+Mallocing 0.1 MBytes per core for fields

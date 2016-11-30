@@ -1,0 +1,282 @@
+ In setup
+SU(2) with reduced staggered fermions
+Microcanonical simulation with refreshing
+Machine = Scalar processor, with 1 nodes
+Hybrid Monte Carlo algorithm
+Phi algorithm
+start: Tue Nov 22 17:10:51 2016
+
+type 0 for no prompts or 1 for prompts
+nx 4
+ny 4
+nz 4
+nt 4
+PBC -1
+iseed 21
+Nroot 1
+Norder 10
+Antiperiodic temporal boundary conditions
+LAYOUT = Hypercubes, options = hyper_prime,
+ON EACH NODE 4 x 4 x 4 x 4
+Mallocing 0.2 MBytes per core for lattice
+Mallocing 0.0 MBytes per core for fields
+Computing SU(2) generators
+Real = -0.0 Imag = 0.0
+Real = -0.0 Imag = 0.7
+Real = -0.0 Imag = 0.7
+Real = -0.0 Imag = 0.0
+------------------------------------
+Real = -0.0 Imag = 0.0
+Real = 0.7 Imag = 0.0
+Real = -0.7 Imag = 0.0
+Real = -0.0 Imag = 0.0
+------------------------------------
+Real = -0.0 Imag = 0.7
+Real = -0.0 Imag = 0.0
+Real = -0.0 Imag = 0.0
+Real = -0.0 Imag = -0.7
+------------------------------------
+Using Nroot = 1
+RHMC Norder 10 for spectral range In Setup_RHMC
+[5e-4, 1000]
+
+
+Reading parameters for evolution
+warms 10
+trajecs 3
+traj_length 1
+nstep 5
+nstep_scalar 10
+traj_between_meas 3
+BETA 1
+site_mass 0.1
+max_cg_iterations 10000
+error_per_site 1e-05
+random
+forget
+random gauge configuration loaded
+In Update function
+source_norm in grsource 521.7
+In CG solver
+congrad: source_norm = 521.7
+stopping when residue is 5.217e-08
+beta_i 1943 rsq 521.7 cd -0.2685
+alpha 627.8 rsqnew 3.275e+05 rsq 521.7
+ vector 9 converged in 0 steps, rsq = 3.467e-08
+iter 0 residue 3.275e+05
+beta_i 84.6 rsq 3.275e+05 cd -3871
+alpha 1012 rsqnew 3.314e+08 rsq 3.275e+05
+ vector 7 converged in 1 steps, rsq = 7.734e-09
+ vector 8 converged in 1 steps, rsq = 7.908e-12
+beta_i 1.407 rsq 3.314e+08 cd -2.355e+08
+alpha 301.3 rsqnew 9.987e+10 rsq 3.314e+08
+beta_i 0.05525 rsq 9.987e+10 cd -1.808e+12
+alpha 147.7 rsqnew 1.475e+13 rsq 9.987e+10
+beta_i 0.003402 rsq 1.475e+13 cd -4.335e+15
+alpha 87.29 rsqnew 1.287e+15 rsq 1.475e+13
+beta_i 0.0002912 rsq 1.287e+15 cd -4.421e+18
+alpha 58.87 rsqnew 7.578e+16 rsq 1.287e+15
+beta_i 6.193e-05 rsq 7.578e+16 cd -1.224e+21
+alpha 141.4 rsqnew 1.071e+19 rsq 7.578e+16
+beta_i 3.617e-07 rsq 1.071e+19 cd -2.962e+25
+alpha 3.084 rsqnew 3.304e+19 rsq 1.071e+19
+beta_i 1.467e-07 rsq 3.304e+19 cd -2.253e+26
+alpha 2.367 rsqnew 7.821e+19 rsq 3.304e+19
+beta_i -2.564e-07 rsq 7.821e+19 cd 3.051e+26
+alpha 0.2007 rsqnew 1.57e+19 rsq 7.821e+19
+beta_i 2.82e-07 rsq 1.57e+19 cd -5.568e+25
+alpha 0.08203 rsqnew 1.288e+18 rsq 1.57e+19
+iter 10 residue 1.288e+18
+beta_i 8.623e-07 rsq 1.288e+18 cd -1.494e+24
+alpha 0.1406 rsqnew 1.811e+17 rsq 1.288e+18
+beta_i 2.358e-06 rsq 1.811e+17 cd -7.682e+22
+alpha 0.129 rsqnew 2.337e+16 rsq 1.811e+17
+beta_i 6.576e-06 rsq 2.337e+16 cd -3.553e+21
+alpha 0.1281 rsqnew 2.994e+15 rsq 2.337e+16
+beta_i 1.878e-05 rsq 2.994e+15 cd -1.594e+20
+alpha 0.1182 rsqnew 3.537e+14 rsq 2.994e+15
+beta_i 5.545e-05 rsq 3.537e+14 cd -6.379e+18
+alpha 0.1115 rsqnew 3.943e+13 rsq 3.537e+14
+beta_i 0.0001698 rsq 3.943e+13 cd -2.322e+17
+alpha 0.1016 rsqnew 4.007e+12 rsq 3.943e+13
+beta_i 0.000543 rsq 4.007e+12 cd -7.379e+15
+alpha 0.09347 rsqnew 3.745e+11 rsq 4.007e+12
+beta_i 0.001812 rsq 3.745e+11 cd -2.067e+14
+alpha 0.08516 rsqnew 3.189e+10 rsq 3.745e+11
+beta_i 0.006334 rsq 3.189e+10 cd -5.035e+12
+alpha 0.07723 rsqnew 2.463e+09 rsq 3.189e+10
+beta_i 0.02322 rsq 2.463e+09 cd -1.061e+11
+alpha 0.07052 rsqnew 1.737e+08 rsq 2.463e+09
+iter 20 residue 1.737e+08
+beta_i 0.08866 rsq 1.737e+08 cd -1.959e+09
+alpha 0.07005 rsqnew 1.217e+07 rsq 1.737e+08
+beta_i 0.3366 rsq 1.217e+07 cd -3.615e+07
+alpha 0.1195 rsqnew 1.455e+06 rsq 1.217e+07
+ vector 6 converged in 22 steps, rsq = 4.201e-09
+beta_i 1.05 rsq 1.455e+06 cd -1.386e+06
+alpha 0.5886 rsqnew 8.562e+05 rsq 1.455e+06
+beta_i 1.713 rsq 8.562e+05 cd -4.998e+05
+alpha 2.35 rsqnew 2.012e+06 rsq 8.562e+05
+beta_i 1.213 rsq 2.012e+06 cd -1.659e+06
+alpha 3.903 rsqnew 7.851e+06 rsq 2.012e+06
+beta_i 0.5951 rsq 7.851e+06 cd -1.319e+07
+alpha 4.217 rsqnew 3.311e+07 rsq 7.851e+06
+beta_i 0.2771 rsq 3.311e+07 cd -1.195e+08
+alpha 4.148 rsqnew 1.373e+08 rsq 3.311e+07
+beta_i 0.1309 rsq 1.373e+08 cd -1.049e+09
+alpha 4.027 rsqnew 5.531e+08 rsq 1.373e+08
+beta_i 0.06313 rsq 5.531e+08 cd -8.761e+09
+alpha 3.912 rsqnew 2.164e+09 rsq 5.531e+08
+beta_i 0.03101 rsq 2.164e+09 cd -6.979e+10
+alpha 3.808 rsqnew 8.241e+09 rsq 2.164e+09
+iter 30 residue 8.241e+09
+beta_i 0.01547 rsq 8.241e+09 cd -5.327e+11
+alpha 3.714 rsqnew 3.06e+10 rsq 8.241e+09
+beta_i 0.007827 rsq 3.06e+10 cd -3.91e+12
+alpha 3.626 rsqnew 1.11e+11 rsq 3.06e+10
+beta_i 0.004012 rsq 1.11e+11 cd -2.766e+13
+alpha 3.545 rsqnew 3.934e+11 rsq 1.11e+11
+beta_i 0.002081 rsq 3.934e+11 cd -1.89e+14
+alpha 3.468 rsqnew 1.364e+12 rsq 3.934e+11
+beta_i 0.001092 rsq 1.364e+12 cd -1.249e+15
+alpha 3.396 rsqnew 4.633e+12 rsq 1.364e+12
+beta_i 0.0005796 rsq 4.633e+12 cd -7.994e+15
+alpha 3.327 rsqnew 1.542e+13 rsq 4.633e+12
+beta_i 0.000311 rsq 1.542e+13 cd -4.957e+16
+alpha 3.264 rsqnew 5.032e+13 rsq 1.542e+13
+beta_i 0.0001686 rsq 5.032e+13 cd -2.985e+17
+alpha 3.204 rsqnew 1.612e+14 rsq 5.032e+13
+beta_i 9.224e-05 rsq 1.612e+14 cd -1.748e+18
+alpha 3.146 rsqnew 5.072e+14 rsq 1.612e+14
+beta_i 5.095e-05 rsq 5.072e+14 cd -9.955e+18
+alpha 3.091 rsqnew 1.568e+15 rsq 5.072e+14
+iter 40 residue 1.568e+15
+beta_i 2.835e-05 rsq 1.568e+15 cd -5.529e+19
+alpha 3.033 rsqnew 4.755e+15 rsq 1.568e+15
+beta_i 1.585e-05 rsq 4.755e+15 cd -3e+20
+alpha 2.966 rsqnew 1.41e+16 rsq 4.755e+15
+beta_i 9.134e-06 rsq 1.41e+16 cd -1.544e+21
+alpha 2.947 rsqnew 4.156e+16 rsq 1.41e+16
+beta_i 5.189e-06 rsq 4.156e+16 cd -8.008e+21
+alpha 2.886 rsqnew 1.199e+17 rsq 4.156e+16
+beta_i 2.999e-06 rsq 1.199e+17 cd -3.999e+22
+alpha 2.843 rsqnew 3.41e+17 rsq 1.199e+17
+beta_i 1.89e-06 rsq 3.41e+17 cd -1.804e+23
+alpha 2.99 rsqnew 1.02e+18 rsq 3.41e+17
+beta_i 1.044e-06 rsq 1.02e+18 cd -9.769e+23
+alpha 2.877 rsqnew 2.934e+18 rsq 1.02e+18
+beta_i 6.704e-07 rsq 2.934e+18 cd -4.376e+24
+alpha 3.093 rsqnew 9.074e+18 rsq 2.934e+18
+beta_i 3.063e-07 rsq 9.074e+18 cd -2.962e+25
+alpha 2.591 rsqnew 2.351e+19 rsq 9.074e+18
+beta_i 1.105e-06 rsq 2.351e+19 cd -2.127e+25
+alpha 20.62 rsqnew 4.847e+20 rsq 2.351e+19
+iter 50 residue 4.847e+20
+beta_i 1.108e-08 rsq 4.847e+20 cd -4.374e+28
+alpha 1.348 rsqnew 6.536e+20 rsq 4.847e+20
+beta_i 1.45e-08 rsq 6.536e+20 cd -4.508e+28
+alpha 1.55 rsqnew 1.013e+21 rsq 6.536e+20
+beta_i 6.317e-09 rsq 1.013e+21 cd -1.603e+29
+alpha 1.283 rsqnew 1.3e+21 rsq 1.013e+21
+beta_i 8.368e-09 rsq 1.3e+21 cd -1.553e+29
+alpha 1.438 rsqnew 1.869e+21 rsq 1.3e+21
+beta_i 3.78e-09 rsq 1.869e+21 cd -4.946e+29
+alpha 1.228 rsqnew 2.295e+21 rsq 1.869e+21
+beta_i 3.316e-09 rsq 2.295e+21 cd -6.921e+29
+alpha 1.221 rsqnew 2.802e+21 rsq 2.295e+21
+beta_i 2.969e-09 rsq 2.802e+21 cd -9.437e+29
+alpha 1.218 rsqnew 3.414e+21 rsq 2.802e+21
+beta_i 5.103e-09 rsq 3.414e+21 cd -6.689e+29
+alpha 1.433 rsqnew 4.891e+21 rsq 3.414e+21
+beta_i 2.229e-09 rsq 4.891e+21 cd -2.194e+30
+alpha 1.217 rsqnew 5.95e+21 rsq 4.891e+21
+beta_i 8.062e-09 rsq 5.95e+21 cd -7.381e+29
+alpha 1.991 rsqnew 1.184e+22 rsq 5.95e+21
+iter 60 residue 1.184e+22
+beta_i 5.583e-10 rsq 1.184e+22 cd -2.121e+31
+alpha 1.082 rsqnew 1.281e+22 rsq 1.184e+22
+beta_i 7.115e-10 rsq 1.281e+22 cd -1.801e+31
+alpha 1.109 rsqnew 1.421e+22 rsq 1.281e+22
+beta_i 9.006e-10 rsq 1.421e+22 cd -1.578e+31
+alpha 1.147 rsqnew 1.63e+22 rsq 1.421e+22
+beta_i 4.168e-10 rsq 1.63e+22 cd -3.911e+31
+alpha 1.072 rsqnew 1.747e+22 rsq 1.63e+22
+beta_i 9.641e-10 rsq 1.747e+22 cd -1.812e+31
+alpha 1.175 rsqnew 2.053e+22 rsq 1.747e+22
+beta_i 1.531e-09 rsq 2.053e+22 cd -1.341e+31
+alpha 1.311 rsqnew 2.692e+22 rsq 2.053e+22
+beta_i -nan rsq 2.692e+22 cd -nan
+alpha -nan rsqnew -nan rsq 2.692e+22
+Norm of psim 0 shift 0.0001515 is nan
+0 Test of (D^2 + shift)psi - src: nan
+Norm of psim 1 shift 0.001591 is nan
+1 Test of (D^2 + shift)psi - src: nan
+Norm of psim 2 shift 0.009217 is nan
+2 Test of (D^2 + shift)psi - src: nan
+Norm of psim 3 shift 0.0487 is nan
+3 Test of (D^2 + shift)psi - src: nan
+Norm of psim 4 shift 0.253 is nan
+4 Test of (D^2 + shift)psi - src: nan
+Norm of psim 5 shift 1.31 is nan
+5 Test of (D^2 + shift)psi - src: nan
+Norm of psim 6 shift 6.796 is 11.3
+6 Test of (D^2 + shift)psi - src: nan
+Norm of psim 7 shift 35.65 is 0.4105
+7 Test of (D^2 + shift)psi - src: nan
+Norm of psim 8 shift 198.6 is 0.01323
+8 Test of (D^2 + shift)psi - src: nan
+Norm of psim 9 shift 1582 is 0.0002086
+9 Test of (D^2 + shift)psi - src: nan
+Iters for source 68
+Calling CG in update_leapfrog -- original action
+In CG solver
+congrad: source_norm = nan
+stopping when residue is nan
+Norm of psim 0 shift 0.0001515 is 0
+0 Test of (D^2 + shift)psi - src: nan
+Norm of psim 1 shift 0.001591 is 0
+1 Test of (D^2 + shift)psi - src: nan
+Norm of psim 2 shift 0.009217 is 0
+2 Test of (D^2 + shift)psi - src: nan
+Norm of psim 3 shift 0.0487 is 0
+3 Test of (D^2 + shift)psi - src: nan
+Norm of psim 4 shift 0.253 is 0
+4 Test of (D^2 + shift)psi - src: nan
+Norm of psim 5 shift 1.31 is 0
+5 Test of (D^2 + shift)psi - src: nan
+Norm of psim 6 shift 6.796 is 0
+6 Test of (D^2 + shift)psi - src: nan
+Norm of psim 7 shift 35.65 is 0
+7 Test of (D^2 + shift)psi - src: nan
+Norm of psim 8 shift 198.6 is 0
+8 Test of (D^2 + shift)psi - src: nan
+Norm of psim 9 shift 1582 is 0
+9 Test of (D^2 + shift)psi - src: nan
+No of iteration in CG = 68
+Plaquette action = -0.0
+the dot product is = nan
+fermion0 nan mom 1410.6422 plaquette -0 sum nan
+eps 0.2
+In CG solver
+congrad: source_norm = nan
+stopping when residue is nan
+Norm of psim 0 shift 0.0001515 is 0
+0 Test of (D^2 + shift)psi - src: nan
+Norm of psim 1 shift 0.001591 is 0
+1 Test of (D^2 + shift)psi - src: nan
+Norm of psim 2 shift 0.009217 is 0
+2 Test of (D^2 + shift)psi - src: nan
+Norm of psim 3 shift 0.0487 is 0
+3 Test of (D^2 + shift)psi - src: nan
+Norm of psim 4 shift 0.253 is 0
+4 Test of (D^2 + shift)psi - src: nan
+Norm of psim 5 shift 1.31 is 0
+5 Test of (D^2 + shift)psi - src: nan
+Norm of psim 6 shift 6.796 is 0
+6 Test of (D^2 + shift)psi - src: nan
+Norm of psim 7 shift 35.65 is 0
+7 Test of (D^2 + shift)psi - src: nan
+Norm of psim 8 shift 198.6 is 0
+8 Test of (D^2 + shift)psi - src: nan
+Norm of psim 9 shift 1582 is 0
+9 Test of (D^2 + shift)psi - src: nan
