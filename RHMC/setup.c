@@ -135,6 +135,8 @@ void make_fields() {
 
   // Temporary vector and
   FIELD_ALLOC(tempvec, vector);
+  FIELD_ALLOC(tempvec1, vector);
+  FIELD_ALLOC(tempvec2, vector);
   
   
 
