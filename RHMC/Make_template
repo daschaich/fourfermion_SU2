@@ -1,26 +1,26 @@
-# Gauge system with lcoal SU(2) symmetry
-#
+# Four-fermion system from SU(2) gauge theory
 # Generic make-include file
 # This template file defines rules and macros common to all architectures
 # It is intended to be an include file for other Makefiles
 # Don't use it by itself!
-#
+
 # Targets:
 #   su2_phi uses phi algorithm
 #   su2_hmc uses hybrid Monte Carlo algorithm, i.e., phi + accept/reject
 #   su2_meas measures two- and four-fermion correlation functions
 #   su2_eig measures extremal eigenvalues of (squared) fermion operator
 #   su2_pfaff calculates the pfaffian
-#
+
 # Routines in this directory use RHMC, multiple time scale integration,
 # and Omelyan integrators.  See README.
 
 MYINCLUDEDIR = .
 INCLUDEDIR = ../include
-#Where the su2 libraries are
+# Where the complex and susy libraries are
 LIBDIR = ../libraries
 
 GLOBAL_HEADERS = ${INCLUDEDIR}/config.h      \
+                 ${INCLUDEDIR}/complex.h     \
                  ${INCLUDEDIR}/su2.h         \
                  ${INCLUDEDIR}/comdefs.h     \
                  ${INCLUDEDIR}/macros.h      \
@@ -33,18 +33,17 @@ MY_HEADERS = lattice.h \
              params.h  \
              su2_includes.h
 
-HEADERS = ${GLOBAL_HEADERS} ${MY_HEADERS} ${INLINE_HEADERS}
+HEADERS = ${GLOBAL_HEADERS} ${MY_HEADERS}
 
 # All required object files
 # Basic set from current directory
-MY_OBJECTS = setup.o      \
-             gen_su2.o \
-             action.o     \
-             info.o       \
-             utilities.o  \
-             grsource.o   \
-             congrad_multi.o \
-             
+MY_OBJECTS = setup.o     \
+             gen_su2.o   \
+             action.o    \
+             info.o      \
+             utilities.o \
+             grsource.o  \
+             congrad_multi.o
 
 # Basic set from generic directory
 G_OBJECTS = io_helpers.o   \
@@ -52,8 +51,8 @@ G_OBJECTS = io_helpers.o   \
             io_lat_utils.o \
             make_lattice.o \
             ranstuff.o     \
-            remap_stdio_from_args.o \
-            ranmom.o \
+            ranmom.o       \
+            remap_stdio_from_args.o
 
 # Selection of layout
 LAYOUT = layout_hyper_prime.o
@@ -63,9 +62,8 @@ ADD_OBJECTS = ${MACHINE_DEP_IO} ${COMMPKG}
 OBJECTS = ${MY_OBJECTS} ${G_OBJECTS} \
           ${LAYOUT} ${ADD_OBJECTS} ${EXTRA_OBJECTS}
 
-#Libraries for su2 functions
-QCDLIB = ${LIBDIR}/su2.${PRECISION}.a
-LIBRARIES = ${QCDLIB}
+# Libraries for complex numbers and su2 functions
+LIBRARIES = ${LIBDIR}/su2.${PRECISION}.a ${LIBDIR}/complex.${PRECISION}.a
 
 # Default rule for C compilation
 .c.o: ; ${CC} -c ${CFLAGS} $<

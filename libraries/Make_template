@@ -22,7 +22,7 @@ HEADERS = \
   ../include/su2.h
 
 # To force a full remake when switching or updating Makefiles
-LASTMAKE = .lastmake.${MAKEFILE} 
+LASTMAKE = .lastmake.${MAKEFILE}
 
 ALLMAKES = ${MAKEFILE} Make_template
 
@@ -31,25 +31,40 @@ ${LASTMAKE}: ${ALL_MAKES}
 	${MAKE} -f ${MAKEFILE} clean
 	touch ${LASTMAKE}
 
+COMPLEXOBJS1 =  cmplx.1o  cexp.1o  clog.1o  csqrt.1o  ce_itheta.1o \
+               dcmplx.1o dcexp.1o dclog.1o dcsqrt.1o dce_itheta.1o
+
+COMPLEXOBJS2 =  cmplx.2o  cexp.2o  clog.2o  csqrt.2o  ce_itheta.2o \
+               dcmplx.2o dcexp.2o dclog.2o dcsqrt.2o dce_itheta.2o
+
+${COMPLEXOBJS1} : ${HEADERS} ${ALLMAKES} ${LASTMAKE}
+${COMPLEXOBJS2} : ${HEADERS} ${ALLMAKES} ${LASTMAKE}
+
+complex.1.a: ${COMPLEXOBJS1}
+	${AR} rcs $@ ${COMPLEXOBJS1}
+
+complex.2.a: ${COMPLEXOBJS2}
+	${AR} rcs $@ ${COMPLEXOBJS2}
+
 SU2OBJS1 = gaussrand.1o byterevn.1o clearvec.1o vec_copy.1o dumpvec.1o \
-	addvec.1o subvec.1o msq_vec.1o dot.1o s_m_vec.1o s_m_a_vec.1o \
-	clear_mat.1o trace_su2.1o su2_trans.1o det_su2.1o unit_mat.1o exp.1o\
-	s_m_mat.1o s_m_a_mat.1o \
-        complextr.1o cs_m_s_mat.1o make_ahmat.1o m_mat_na.1o \
-        m_mat_nn.1o m_matvec.1o m_matvec_s.1o m_mv_s_4dir.1o \
-        rand_ahmat.1o realtr.1o s_m_a_mat.1o s_m_a_vec.1o  s_m_mat.1o \
-        s_m_vec.1o su2_adjoint.1o su2_conjg.1o su2mat_copy.1o su2_proj.1o \
-        subvec.1o uncmp_ahmat.1o m_mat_an.1o cs_m_a_mat.1o cs_m_mat.1o vec_conjug.1o      
+           addvec.1o subvec.1o msq_vec.1o dot.1o s_m_vec.1o s_m_a_vec.1o \
+           clear_mat.1o trace_su2.1o su2_trans.1o det_su2.1o unit_mat.1o \
+           s_m_mat.1o s_m_a_mat.1o complextr.1o cs_m_s_mat.1o make_ahmat.1o \
+           m_mat_na.1o m_mat_nn.1o m_matvec.1o m_matvec_s.1o m_mv_s_4dir.1o \
+           rand_ahmat.1o realtr.1o s_m_a_mat.1o s_m_a_vec.1o s_m_mat.1o \
+           s_m_vec.1o su2_adjoint.1o su2_conjg.1o su2mat_copy.1o su2_proj.1o \
+           subvec.1o uncmp_ahmat.1o m_mat_an.1o cs_m_a_mat.1o cs_m_mat.1o \
+           vec_conjug.1o
 
 SU2OBJS2 = gaussrand.2o byterevn.2o clearvec.2o vec_copy.2o dumpvec.2o \
-	addvec.2o subvec.2o msq_vec.2o dot.2o s_m_vec.2o s_m_a_vec.2o \
-	clear_mat.2o trace_su2.2o vec_conjug.2o su2_trans.2o det_su2.2o\
-	s_m_mat.2o s_m_a_mat.2o exp.2o unit_mat.2o\
-        complextr.2o cs_m_s_mat.2o make_ahmat.2o m_mat_na.2o \
-        m_mat_nn.2o m_matvec.2o m_matvec_s.2o m_mv_s_4dir.2o \
-        rand_ahmat.2o realtr.2o s_m_a_mat.2o s_m_a_vec.2o s_m_mat.2o \
-        s_m_vec.2o su2_adjoint.2o su2_conjg.2o su2mat_copy.2o su2_proj.2o \
-        subvec.2o uncmp_ahmat.2o m_mat_an.2o cs_m_a_mat.2o cs_m_mat.2o 
+           addvec.2o subvec.2o msq_vec.2o dot.2o s_m_vec.2o s_m_a_vec.2o \
+           clear_mat.2o trace_su2.2o su2_trans.2o det_su2.2o unit_mat.2o \
+           s_m_mat.2o s_m_a_mat.2o complextr.2o cs_m_s_mat.2o make_ahmat.2o \
+           m_mat_na.2o m_mat_nn.2o m_matvec.2o m_matvec_s.2o m_mv_s_4dir.2o \
+           rand_ahmat.2o realtr.2o s_m_a_mat.2o s_m_a_vec.2o s_m_mat.2o \
+           s_m_vec.2o su2_adjoint.2o su2_conjg.2o su2mat_copy.2o su2_proj.2o \
+           subvec.2o uncmp_ahmat.2o m_mat_an.2o cs_m_a_mat.2o cs_m_mat.2o \
+           vec_conjug.2o
 
 # Special header dependencies
 byterevn.o : ../include/int32type.h
@@ -65,8 +80,8 @@ su2.1.a::	 ${SU2OBJS1}
 su2.2.a::	 ${SU2OBJS2}
 	${AR} rcs $@ ${SU2OBJS2}
 
-LIBRARIES1 = su2.1.a
-LIBRARIES2 = su2.2.a
+LIBRARIES1 = complex.1.a su2.1.a
+LIBRARIES2 = complex.2.a su2.2.a
 
 ifeq ($(strip ${PRECISION}),1)
 

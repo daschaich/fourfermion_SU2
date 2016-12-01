@@ -10,11 +10,10 @@
 int main(int argc, char *argv[]) {
   int prompt;
   int traj_done, s_iters, avs_iters = 0, avm_iters = 0, Nmeas = 0;
-  //Real f_eps, s_eps;
-  
+//  Real f_eps, s_eps;
   double dtime;
 #ifdef CORR
-  int j,i,k,l;
+  int i, j, k, l;
 #endif
 
   // Setup
@@ -27,10 +26,7 @@ int main(int argc, char *argv[]) {
   g_sync();
   prompt = setup();
   //epsilon();
-  
-  
   gen_su2();
-  
   setup_rhmc();
 
   // Load input and run
@@ -40,9 +36,6 @@ int main(int argc, char *argv[]) {
   }
   dtime = -dclock();
 
-  
-
-  
   for (traj_done = 0; traj_done < warms; traj_done++)
     update();
   node0_printf("WARMUPS COMPLETED\n");
@@ -52,24 +45,21 @@ int main(int argc, char *argv[]) {
     s_iters = update();
     avs_iters += s_iters;
 
-   
-
     // Less frequent measurements every "propinterval" trajectories
-/*    if ((traj_done % propinterval) == (propinterval - 1)) {
+    if ((traj_done % propinterval) == (propinterval - 1)) {
 #ifdef CORR
       // Correlator measurements
       avm_iters += condensates();
 
       for (j = 0; j < Nsrc; j++) {
         node0_printf("Source point %d %d %d %d\n",
-                     pnts[j][0], pnts[j][1], pnts[j][2], pnts[j][3]);
+            pnts[j][0], pnts[j][1], pnts[j][2], pnts[j][3]);
         avm_iters += correlators(pnts[j]);
       }
       Nmeas++;
 #endif
-    }*/
-  
-}
+    }
+  }
   node0_printf("RUNNING COMPLETED\n");
 
   if (Nmeas > 0) {

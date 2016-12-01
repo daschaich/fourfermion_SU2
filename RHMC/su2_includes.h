@@ -21,6 +21,7 @@
 // -----------------------------------------------------------------
 // Prototypes for functions in high level code
 int setup();
+void gen_su2();
 void setup_rhmc();
 int readin(int prompt);
 int update();

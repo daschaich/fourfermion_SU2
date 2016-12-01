@@ -10,31 +10,9 @@
 
 
 // -----------------------------------------------------------------
-/*void d_sigmasum(double *sum) {
-#if (DIMF != 4)
-  #error "Assuming DIMF=4!"
-#endif
-  register int i;
-  register site *s;
-
-  *sum = 0.0;
-  FORALLSITES(i, s) {
-    *sum += s->sigma.e[0] + s->sigma.e[1] + s->sigma.e[2];
-    *sum += s->sigma.e[3] + s->sigma.e[4] + s->sigma.e[5];
-  }
-  g_doublesum(sum);
-  *sum /= (double)volume;
-}*/
-// -----------------------------------------------------------------
-
-
-
-// -----------------------------------------------------------------
 gauge_file *save_lattice(int flag, char *filename) {
   double dtime;
   gauge_file *gf = NULL;
-
-  //d_sigmasum(&sigmasum);
 
   dtime = -dclock();
   switch(flag) {
@@ -51,11 +29,7 @@ gauge_file *save_lattice(int flag, char *filename) {
   dtime += dclock();
   if (flag != FORGET)
     node0_printf("Time to save = %e\n", dtime);
-//#if PRECISION == 1
-  //node0_printf("CHECK SIGMA SUM: %e\n", sigmasum);
-//#else             // Double precision
-  //node0_printf("CHECK SIGMA SUM: %.16e\n", sigmasum);
-//#endif
+
   return gf;
 }
 // -----------------------------------------------------------------
@@ -63,109 +37,26 @@ gauge_file *save_lattice(int flag, char *filename) {
 
 
 // -----------------------------------------------------------------
-// Set sigma to unity
+// Set links to unit matrices
 void coldlat() {
-  
-  complex *det= malloc(sizeof(*det));
-  
-  register int i;
-  register int dir;
+  register int i, j, k, dir;
   register site *s;
-  register int k,l;
-  FORALLSITES(i, s) {
-  for(dir= XUP; dir <= TUP ; dir++){
-  for(k=0; k < 2 ; k++){
-  for(l=0; l < 2 ; l++){
-   
-   if( k != l){s->link[dir].e[k][l].real = 0.0 ; s->link[dir].e[k][l].imag = 0.0 ;}
-  
-   else{s->link[dir].e[k][l].real = 1.0 ; s->link[dir].e[k][l].imag = 0.0;}
 
-  
+  FORALLSITES(i, s) {
+    for (dir = XUP; dir <= TUP; dir++) {
+      for (j = 0; j < DIMF; j++) {
+        for (k = 0; k < DIMF; k++) {
+          if (j != k)
+            s->link[dir].e[j][k] = cmplx(0.0, 0.0);
+          else
+            s->link[dir].e[j][k] = cmplx(1.0, 0.0);
         }
-     }
+      }
+    }
   }
- 
- 
- 
-}
-
-
-
-  node0_printf("unit scalar configuration loaded\n");
+  node0_printf("unit gauge configuration loaded\n");
 }
 // -----------------------------------------------------------------
-
-
-
-// -----------------------------------------------------------------
-// Set sigma to random gaussian numbers
-void randomlat() {
-  double *det = malloc(sizeof(*det));
-  register int i;
-  register site *s;
-  register int j,m ;
-  FORALLSITES(i, s) {
-#ifdef SITERAND
-   
-  for (j=0  ;  j< 4  ; j++){
-  for (m=0  ;  m < NUMGEN ; m++){
-  
-  
-    clear_su2mat(&(s->temp_link[j]));
-    scalar_mult_add_su2_matrix(&(s->temp_link[j]),&(Lambda[m]), gaussian_rand_no(&(s->site_prn)) , &(s->temp_link[j])); 
-  
-    
-    
-     }
-   exp_su2_matrix(&(s->temp_link[j]),&(s->link[j]));
-   
-   
-   
-}
-#else
-  for(j=0 ; j < 4 ; j++){
-  for( m=0 ; m < NUMGEN ; m++){
-  
-    clear_su2mat(&(s->temp_link[j]));
-    scalar_mult_add_su2_matrix(&(s->temp_link[j]), &(Lambda[m]) , gaussian_rand_no(&node_prn) , &(s->temp_link[j]));
-  
-    
-    
-           
-     }
-   exp_su2_matrix(&(s->temp_link[j]),&(s->link[j]));
-   
-   
-   }
-#endif
-}
-
-/*FORALLSITES(i,s){
-  for (int dir = XUP ; dir <=TUP; dir++){
-  for(int n=0; n < DIMF ; n++){
-  for(int p=0; p < DIMF ; p++){
-
-  printf(" real link = %.1g imag link = %.1g\n", s->link[dir].e[n][p].real,s->link[dir].e[n][p].imag);
-
-        }
-     }
-  printf("----------------\n");
-   }
-}*/
-
- 
-
-
- 
-
-
-  node0_printf("random gauge configuration loaded\n");
-}
-// -----------------------------------------------------------------
-
-
-
 
 
 
@@ -184,10 +75,6 @@ gauge_file *reload_lattice(int flag, char *filename) {
       coldlat();
       gf = NULL;
       break;
-    case RANDOM:          // Random (hot) lattice
-      randomlat();
-      gf = NULL;
-      break;
     case RELOAD_SERIAL:   // Read binary lattice serially
       gf = restore_serial(filename);
       break;
@@ -199,12 +86,6 @@ gauge_file *reload_lattice(int flag, char *filename) {
   if (flag != FRESH && flag != RANDOM && flag != CONTINUE)
     node0_printf("Time to reload gauge configuration = %e\n", dtime);
 
-  //d_sigmasum(&sigmasum);
-//#if PRECISION == 1
-//  node0_printf("CHECK SIGMA SUM: %e\n", sigmasum);
-//#else             // Double precision
-//  node0_printf("CHECK SIGMA SUM: %.16e\n", sigmasum);
-//#endif
   fflush(stdout);
   dtime = -dclock();
   return gf;
@@ -221,7 +102,7 @@ int ask_starting_lattice(FILE *fp, int prompt, int *flag, char *filename) {
   int status;
 
   if (prompt!=0)
-    printf("enter 'continue', 'fresh', 'random' or 'reload_serial'\n");
+    printf("enter 'continue', 'fresh' or 'reload_serial'\n");
   status = fscanf(fp, "%s", savebuf);
   if (status == EOF) {
     printf("ask_starting_lattice: EOF on STDIN.\n");
@@ -236,10 +117,6 @@ int ask_starting_lattice(FILE *fp, int prompt, int *flag, char *filename) {
   printf("%s", savebuf);
   if (strcmp("fresh", savebuf) == 0) {
     *flag = FRESH;
-    printf("\n");
-  }
-  else if (strcmp("random", savebuf) == 0) {
-    *flag = RANDOM;
     printf("\n");
   }
   else if (strcmp("continue", savebuf) == 0) {
