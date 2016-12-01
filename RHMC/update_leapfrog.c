@@ -11,6 +11,8 @@
 #endif
 // -----------------------------------------------------------------
 
+
+
 // -----------------------------------------------------------------
 int update_step(Real *fnorm, Real *snorm, vector **src, vector ***psim) {
   int step, iters = 0, n;
@@ -18,7 +20,7 @@ int update_step(Real *fnorm, Real *snorm, vector **src, vector ***psim) {
   node0_printf("eps %.4g\n", eps);
 
   // First u(t/2)
-  
+
   update_u(0.5 * eps);
 
   for (step = 0; step < nsteps[0]; step++) {
@@ -63,7 +65,6 @@ int update() {
       psim[n][j] = malloc(sites_on_node * sizeof(vector));
   }
 
-  node0_printf("In Update function\n");
   // Refresh the momenta
   ranmom();
 
@@ -84,8 +85,8 @@ int update() {
   // congrad_multi initializes psim
   for (n = 0; n < Nroot; n++)
     iters += congrad_multi(src[n], psim[n], niter, rsqmin, &final_rsq);
-    
-  
+
+
   node0_printf("No of iteration in CG = %.1d\n",iters);
 
   // Find initial action
@@ -101,7 +102,7 @@ int update() {
   Real xrandom;   // For accept/reject test
   // Copy gauge field to old_link
   gauge_field_copy(F_OFFSET(link[0]), F_OFFSET(old_link[0]));
- 
+
 #endif
   // Do microcanonical updating
   iters += update_step(fnorm, &snorm, src, psim);
@@ -114,7 +115,7 @@ int update() {
 #endif
   for (n = 0; n < Nroot; n++)
     iters += congrad_multi(src[n], psim[n], niter, rsqmin, &final_rsq);
-    
+
   endaction = action(src, psim);
   change = endaction - startaction;
 #ifdef HMC_ALGORITHM

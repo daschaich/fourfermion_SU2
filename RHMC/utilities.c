@@ -22,6 +22,8 @@ register site *s;
     }
   }
 }
+// -----------------------------------------------------------------
+
 
 
 // -----------------------------------------------------------------
@@ -31,14 +33,13 @@ register site *s;
 void fermion_op(vector *src, vector *dest,int sign) {
   register int i;
   register site *s;
-  
+
   su2_matrix *m;
   su2_matrix *m1 = malloc(sizeof(*m1));
-  int dir ; //L[NDIMS] = {nx,ny,nz,nt};
+  int dir; //L[NDIMS] = {nx,ny,nz,nt};
   //Real tr, link_mass;
-  Real vev[DIMF][DIMF];
   vector tvec,tvec_dir, tvec_opp, tvec3,tvec4;
-  
+
   msg_tag *tag[2 * NDIMS];
   msg_tag *mtag[4];
 
@@ -48,88 +49,75 @@ void fermion_op(vector *src, vector *dest,int sign) {
     terminate(1);
   }
 
-  vev[0][1]=1.0;  
-  vev[1][0]=-1.0;
-  vev[0][0]=0.0;
-  vev[1][1]=0.0;
- 
+  for (dir = XUP; dir <= TUP; dir++) {
+    FORALLSITES(i,s) {
+      clear_su2mat(&(s->temp_link[dir]));
 
- 
-   
-for (dir =XUP ;dir <=TUP ; dir++){
-   FORALLSITES(i,s){
-    clear_su2mat(&(s->temp_link[dir]));
-      
-    if(lattice[i].parity == EVEN){su2mat_copy(&(s->link[dir]),&(s->temp_link[dir])) ;}
-     
-    else{su2_conjug(&(s->link[dir]), &(s->temp_link[dir]));} 
-    
-   
-   }
+      if(lattice[i].parity == EVEN)
+        su2mat_copy(&(s->link[dir]),&(s->temp_link[dir]));
+      else
+        su2_conjug(&(s->link[dir]), &(s->temp_link[dir]));
+    }
+  }
 
-}
-// Start gathers for kinetic term
-for (dir = XUP; dir <= TUP; dir++) {
-
-    //if(L[dir] <= 1){continue;}
+  // Start gathers for kinetic term
+  for (dir = XUP; dir <= TUP; dir++) {
+    //if(L[dir] <= 1) {continue;}
 
     tag[dir] = start_gather_field(src, sizeof(vector), dir,
                                   EVENANDODD, gen_pt[dir]);
+
     tag[OPP_DIR(dir)] = start_gather_field(src, sizeof(vector), OPP_DIR(dir),
                                            EVENANDODD, gen_pt[OPP_DIR(dir)]);
 
-    mtag[dir] = start_gather_site(F_OFFSET(temp_link[dir]), sizeof(su2_matrix),OPP_DIR(dir), EVENANDODD, gen_pt[11-dir]);
-}
+    mtag[dir] = start_gather_site(F_OFFSET(temp_link[dir]), sizeof(su2_matrix),
+                                  OPP_DIR(dir), EVENANDODD, gen_pt[11-dir]);
+  }
 
-//Accumulate (m * epsilon^{ab}  \ psi^{a} \psi{b}) term as gathers run
+  // Accumulate (m * epsilon^{ab} psi^a psi^b) term as gathers run
   FORALLSITES(i, s) {
-  clearvec(&(dest[i]));
- 
-        dest[i].c[0].real = 2* site_mass * vev[0][1] * src[i].c[1].real;
-        dest[i].c[0].imag = 2* site_mass * vev[0][1] * src[i].c[1].imag;
+    CMULREAL(src[i].c[1],  2.0 * site_mass, dest[i].c[0]);
+    CMULREAL(src[i].c[0], -2.0 * site_mass, dest[i].c[1]);
+  }
 
-        dest[i].c[1].real = 2* site_mass * vev[1][0] * src[i].c[0].real;
-        dest[i].c[1].imag = 2* site_mass * vev[1][0] * src[i].c[0].imag;
-}
-
-// Accumulate kinetic term as gathers finish
+  // Accumulate kinetic term as gathers finish
   for (dir = XUP; dir <= TUP; dir++) {
-   //if (L[dir]<=1) {continue;}
+    //if (L[dir]<=1) {continue;}
 
     wait_gather(tag[dir]);
     wait_gather(tag[OPP_DIR(dir)]);
     wait_gather(mtag[dir]);
-FORALLSITES(i, s) {
-      // Deal with BCs here 
+    FORALLSITES(i, s) {
+      // Deal with BCs here
       // Need to change the order of BC and matrix multiplication
       // Multiply by matrix and accumulate
 
       vec_copy((vector *)gen_pt[dir][i], &tvec_dir);
       vec_copy((vector *)gen_pt[OPP_DIR(dir)][i], &tvec_opp);
-      
-      if (dir == TUP && PBC < 0 && s->t == nt - 1)
-     { scalar_mult_vec(&tvec_dir, -1.0, &tvec_dir); } 
-      else if (dir == TUP && PBC < 0 && s->t == 0)
-     { scalar_mult_vec(&tvec_opp, -1.0, &tvec_opp); }
 
-        mult_su2_mat_vec(&(s->temp_link[dir]),&tvec_dir, &tvec3); //Multiplying the link(x) to psi( x + mu)
-        m = (su2_matrix *)(gen_pt[11-dir][i]);
-        su2_trans(m ,m1);//Transposing  the link(x-mu)
-        mult_su2_mat_vec(m1,&tvec_opp, &tvec4); // Multiplying the link(x-mu) psi( x - mu)
-        sub_vec(&tvec3, &tvec4, &tvec);
-        scalar_mult_add_vec(&(dest[i]), &tvec, 0.5 * s->phase[dir], &(dest[i]));
- }
+      if (dir == TUP && PBC < 0 && s->t == nt - 1)
+        scalar_mult_vec(&tvec_dir, -1.0, &tvec_dir);
+      else if (dir == TUP && PBC < 0 && s->t == 0)
+        scalar_mult_vec(&tvec_opp, -1.0, &tvec_opp);
+
+      mult_su2_mat_vec(&(s->temp_link[dir]),&tvec_dir, &tvec3); //Multiplying the link(x) to psi( x + mu)
+      m = (su2_matrix *)(gen_pt[11-dir][i]);
+      su2_trans(m ,m1);//Transposing  the link(x-mu)
+      mult_su2_mat_vec(m1,&tvec_opp, &tvec4); // Multiplying the link(x-mu) psi( x - mu)
+      sub_vec(&tvec3, &tvec4, &tvec);
+      scalar_mult_add_vec(&(dest[i]), &tvec, 0.5 * s->phase[dir], &(dest[i]));
+    }
     cleanup_gather(tag[dir]);
     cleanup_gather(tag[OPP_DIR(dir)]);
     cleanup_gather(mtag[dir]);
-}
-// Overall negative sign and conjugate for adjoint
-if (sign == -1) {
+  }
+  // Overall negative sign and conjugate for adjoint
+  if (sign == -1) {
     FORALLSITES(i, s)
       scalar_mult_vec(&(dest[i]), -1.0, &(dest[i]));
-     
-}
-free(m1);
+
+  }
+  free(m1);
 
 }
 // -----------------------------------------------------------------
@@ -141,21 +129,16 @@ free(m1);
 //   dest = D^2 src
 // Use tempvec for temporary storage
 void DSq(vector *src, vector *dest) {
-  fermion_op(src, tempvec,PLUS);
+  fermion_op(src, tempvec, PLUS);
   register site *s;
   register int i;
 
-  FORALLSITES(i,s)  {
+  FORALLSITES(i,s)
+   vec_conjug(&(tempvec[i]), &(tempvec1[i]));
 
-   vec_conjug(&(tempvec[i]) , &(tempvec1[i]));
+  fermion_op(tempvec1, tempvec2, MINUS);
 
-}
-  fermion_op(tempvec1,tempvec2,MINUS);
-
-  FORALLSITES(i,s)  {
-
+  FORALLSITES(i,s)
    vec_conjug(&(tempvec2[i]),&(dest[i]));
-
-} 
 }
 // -----------------------------------------------------------------

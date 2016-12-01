@@ -1,20 +1,14 @@
 // -----------------------------------------------------------------
 // Update the momentum matrices
 #include "su2_includes.h"
-
-
-
 // -----------------------------------------------------------------
 
 
-
-// -----------------------------------------------------------------
 
 // -----------------------------------------------------------------
 double gauge_force(Real eps) {
   register int i, dir1, dir2;
   register site *st;
-  register Real eb3 = eps ;
   msg_tag *tag0, *tag1, *tag2;
   int start;
   su2_matrix tmat1, tmat2,tmat3,tmat4,tmat5;
@@ -77,7 +71,7 @@ double gauge_force(Real eps) {
 
         wait_gather(tag1);
         FORALLSITES(i, st) {
-          
+
           scalar_mult_add_su2_matrix(&(st->staple),(su2_matrix *)gen_pt[1][i], 1.0 ,&(st->staple));
         }
         cleanup_gather(tag0);
@@ -91,18 +85,18 @@ double gauge_force(Real eps) {
       mult_su2_na(&(st->staple), &(st->link[dir1]) ,&tmat3);
       su2_adjoint(&(st->staple) ,&tmat5);
       mult_su2_nn(&(st->link[dir1]), &tmat5, &tmat1);
-      
+
       scalar_mult_add_su2_matrix(&tmat1 ,&tmat3 , -1.0 , &(st->staple));
       unit_su2mat(&tmat4);
       scalar_mult_su2_matrix(&tmat4 , -0.5 ,&tmat4);
-      trace_su2(&(st->staple),ctmp) ;
+      trace_su2(&(st->staple),ctmp);
       c_scalar_mult_add_su2mat(&(st->staple),&tmat4,ctmp,&(st->staple));
 
       scalar_mult_su2_matrix(&(st->staple) , (BETA/4.0) ,&tmat1);
 
       //Finally updating the momenta
       uncompress_anti_hermitian(&(st->mom[dir1]), &tmat2);
-      scalar_mult_add_su2_matrix(&tmat2, &tmat1, eb3, &(st->staple));
+      scalar_mult_add_su2_matrix(&tmat2, &tmat1, eps, &(st->staple));
       make_anti_hermitian(&(st->staple), &(st->mom[dir1]));
       norm += (double)realtrace_su2(&tmat1, &tmat1);
     }
@@ -110,137 +104,124 @@ double gauge_force(Real eps) {
 
   g_doublesum(&norm);
   free(ctmp);
-  return (eb3 * sqrt(norm) / volume);
+  return (eps * sqrt(norm) / volume);
 }
 // -----------------------------------------------------------------
 
 
-//Assume CG has been run and the solution is in psim[n]
+
+// -----------------------------------------------------------------
+// Assume CG has been run and the solution is in psim[n]
 double fermion_force(Real eps, vector *src, vector **sol){
-
-
- register int i, dir;
- register site *s,*st;
- int n;
- Real tr;
- double norm;
- Real ferm_epsilon = 2.0* eps;
- complex *dum = malloc(sizeof(*dum));
- 
-  
- vector tvec, tvec_sol;
-  
- su2_matrix *a = malloc(sizeof(*a));
- su2_matrix *b =malloc(sizeof(*b));
- su2_matrix tmat, tmat1, tmat2, tmat3;
-  
-  
- msg_tag *tag0[NDIMS] ,*tag1[NDIMS];
-
- vector *psol= malloc(sites_on_node * sizeof(vector));
-
+  register int i, dir;
+  register site *s,*st;
+  int n;
+  Real tr;
+  double norm;
+  Real ferm_epsilon = 2.0* eps;
+  complex *dum = malloc(sizeof(*dum));
+  vector tvec, tvec_sol;
+  su2_matrix *a = malloc(sizeof(*a));
+  su2_matrix *b = malloc(sizeof(*b));
+  su2_matrix tmat, tmat1, tmat2, tmat3;
+  msg_tag *tag0[NDIMS] ,*tag1[NDIMS];
+  vector *psol= malloc(sites_on_node * sizeof(vector));
 
   // Zero the force collectors
   for (dir = XUP; dir <= TUP; dir++) {
-    FORALLSITES(i, st)
+    FORALLSITES(i, s)
       clear_su2mat(&sigma[dir][i]);
-}
+  }
 
-for(int i=0 ;i < NUMGEN ; i++){
+  for(i = 0; i < NUMGEN; i++)
+    clear_su2mat(&(temp_Lambda[i]));
 
-clear_su2mat(&(temp_Lambda[i]));
+  //Hit the solution vectors with the fermion operator
+  /*for (n = 0; n < Norder; n++) {
+    fermion_op(sol[n], psol, PLUS);
 
-}
-  
-
-//  clear_su2mat(b);
-
-//Hit the solution vectors with the fermion operator
-/*for (n = 0; n < Norder; n++) {
-  fermion_op(sol[n], psol, PLUS);
-
-for (dir = XUP; dir <= TUP; dir++) {
+    for (dir = XUP; dir <= TUP; dir++) {
 
   //Start gathers for psol[n] = M sol[n]  , and sol[n]
-    tag0[dir] = start_gather_field(psol, sizeof(vector), dir,
-                                  EVENANDODD, gen_pt[dir]); 
+  tag0[dir] = start_gather_field(psol, sizeof(vector), dir,
+  EVENANDODD, gen_pt[dir]);
 
-    tag1[dir] = start_gather_field(sol[n], sizeof(vector), dir,
-                                  EVENANDODD, gen_pt[3+dir]); 
- 
+  tag1[dir] = start_gather_field(sol[n], sizeof(vector), dir,
+  EVENANDODD, gen_pt[3+dir]);
+
 
   wait_gather(tag0[dir]);
   wait_gather(tag1[dir]);
-  
- FORALLSITES(i,s){
 
-      vec_copy((vector *)gen_pt[dir][i], &tvec);
-      
-      vec_copy((vector *)gen_pt[3+dir][i], &tvec_sol);
-      
-      if (dir == TUP && PBC < 0 && s->t == nt - 1)
-     { scalar_mult_vec(&tvec, -1.0, &tvec);
-       scalar_mult_vec(&tvec_sol, -1.0, &tvec_sol);}
+  FORALLSITES(i,s){
 
-    
+  vec_copy((vector *)gen_pt[dir][i], &tvec);
+
+  vec_copy((vector *)gen_pt[3+dir][i], &tvec_sol);
+
+  if (dir == TUP && PBC < 0 && s->t == nt - 1)
+  { scalar_mult_vec(&tvec, -1.0, &tvec);
+  scalar_mult_vec(&tvec_sol, -1.0, &tvec_sol);}
+
+
   su2_projector(&tvec_sol, &(psol[i]),a);
-  
 
- 
- for(int c=0; c < NUMGEN; c++){
-  
- if(s->parity == EVEN ){
+
+
+  for(int c=0; c < NUMGEN; c++){
+
+  if(s->parity == EVEN ){
   mult_su2_nn(&(s->link[dir]),a,&tmat);
   mult_su2_nn(&(Lambda[c]),&tmat,&tmat1);
   trace_su2(&tmat1,dum); }
-  else{ 
+  else{
   su2_conjug(&(s->link[dir]),&(s->temp_link1[dir]));
   mult_su2_nn(&(s->temp_link1[dir]),a,&tmat);
   su2_conjug(&(Lambda[c]),&(temp_Lambda[c]));
   mult_su2_nn(&(temp_Lambda[c]), &tmat,&tmat1);
   trace_su2(&tmat1,dum);}
-  
+
   tr =-0.5 * (*dum).real * s->phase[dir];
   scalar_mult_add_su2_matrix(b,&(Lambda[c]),tr,b);
-}
+  }
 
-  
+
   clear_su2mat(a);
   su2_projector(&(sol[n][i]),&tvec,a);
-   
 
-for(int d=0; d < NUMGEN; d++){
+
+  for(int d=0; d < NUMGEN; d++){
   if(s->parity == EVEN ){
   mult_su2_nn(&(s->link[dir]),a,&tmat);
   mult_su2_nn(&(Lambda[d]),&tmat,&tmat1);
   trace_su2(&tmat1,dum);}
-  else{ 
+  else{
   su2_conjug(&(s->link[dir]),&(s->temp_link1[dir]));
   mult_su2_nn(&(s->temp_link1[dir]),a,&tmat);
   su2_conjug(&(Lambda[d]),&(temp_Lambda[d]));
   mult_su2_nn(&(temp_Lambda[d]),&tmat,&tmat1);
   trace_su2(&tmat1,dum);
   }
-  
+
   tr = 0.5 * (*dum).real * s->phase[dir];
   scalar_mult_add_su2_matrix(b,&(Lambda[d]),tr,b);
-}
-  
+  }
+
   scalar_mult_add_su2_matrix(&sigma[dir][i], b,-2.0*amp4[n],&sigma[dir][i]);
-  
-       }
 
-    cleanup_gather(tag0[dir]);
-    cleanup_gather(tag1[dir]);
-    
-      
-     }
+}
 
-}  
+cleanup_gather(tag0[dir]);
+cleanup_gather(tag1[dir]);
+
+
+}
+
+}
 
 */
 
-//Update the momenta with the gauge force
+  //Update the momenta with the gauge force
   for (dir = XUP; dir <= TUP; dir++) {
     FORALLSITES(i, st) {
       uncompress_anti_hermitian(&(st->mom[dir]), &tmat2);// Transform mom(an anti-hermitian matrix) to an SU(2) matrix
@@ -250,22 +231,13 @@ for(int d=0; d < NUMGEN; d++){
     }
   }
   g_doublesum(&norm);
-  
 
-  
-   
-   
   free(psol);
   free(a);
   free(b);
   free(dum);
-   
-  
-   
-    
-  
+
   return ferm_epsilon * sqrt(norm) / volume * 2;
-  
 }
 // -----------------------------------------------------------------
 

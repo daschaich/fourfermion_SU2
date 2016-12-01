@@ -28,31 +28,24 @@ typedef struct {
   // Staggered phases not including temporal boundary conditions
   Real phase[NDIMS];
 
-
-
- //Gauge field
- su2_matrix link[4];
+  //Gauge field
+  su2_matrix link[4];
 
 #ifdef HMC_ALGORITHM
- su2_matrix old_link[4]; // For accept/reject
+  su2_matrix old_link[4]; // For accept/reject
 #endif
 
-//Antihermitian momentum matrices
+  //Antihermitian momentum matrices
+  anti_hermitmat mom[4];
 
-anti_hermitmat mom[4];
+  //Link matrices for defining curly U_{mu}(x)
+  su2_matrix temp_link[4];
 
-//Link matrices for defining curly U_{mu}(x)
+  //Temporary link matrices for use in computing fermion forces
+  su2_matrix temp_link1[4];
 
-su2_matrix temp_link[4];
-
-//Temporary link matrices for use in computing fermion forces
-
-su2_matrix temp_link1[4];
-
-
-//Wilson staple
-su2_matrix staple,tempmat1;
-
+  //Wilson staple
+  su2_matrix staple,tempmat1;
 } site;
 // -----------------------------------------------------------------
 
@@ -125,23 +118,17 @@ EXTERN vector *dest;
 //EXTERN vector **psol;
 
 // Temporary vectors, matrices and Twist_Fermion
-
-EXTERN vector *tempvec;  
+EXTERN vector *tempvec;
 EXTERN vector *tempvec1;
 EXTERN vector *tempvec2;
-
-
 EXTERN su2_matrix *tempmat;
 //EXTERN su2_matrix *tempmat2; // used in Polyakov loop calculation
 
 //Structures defined for computing the generator matrices
 
-EXTERN int posmat[DIMF][DIMF] ;
-EXTERN complex genmat[NUMGEN][DIMF][DIMF] ;
-EXTERN complex tr[NUMGEN][NUMGEN], strconst[NUMGEN][NUMGEN][NUMGEN] ;
-
-
-
+EXTERN int posmat[DIMF][DIMF];
+EXTERN complex genmat[NUMGEN][DIMF][DIMF];
+EXTERN complex tr[NUMGEN][NUMGEN], strconst[NUMGEN][NUMGEN][NUMGEN];
 
 EXTERN gauge_file *startlat_p;
 EXTERN gauge_file *savelat_p;
@@ -155,8 +142,6 @@ EXTERN site *lattice;
 // Probably need at least 8=2NDIMS
 #define N_POINTERS 12
 EXTERN char **gen_pt[N_POINTERS];
-//#define N_Pnt 4
-//EXTERN char **gen_pnt[N_Pnt];
 
 #ifdef CORR
 EXTERN int Nstoch;                  // Number of stochastic sources

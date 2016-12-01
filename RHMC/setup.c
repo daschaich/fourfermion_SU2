@@ -131,23 +131,23 @@ void make_fields() {
   double size = (double)(2.0 * sizeof(vector));
   FIELD_ALLOC(src, vector);
   FIELD_ALLOC(dest, vector);
-  
+
 
   // Temporary vectors for use in the definition of D^2
   FIELD_ALLOC(tempvec, vector);
   FIELD_ALLOC(tempvec1, vector);
   FIELD_ALLOC(tempvec2, vector);
-  
-  
+
+
 
   //Temporary gauge fields ------might need more definitions as required.
-  
- 
+
+
  //Fermion force
 
   FIELD_ALLOC_VEC(sigma,su2_matrix,4);
-  
- //Plaquette action 
+
+ //Plaquette action
   FIELD_ALLOC(tempmat,su2_matrix);
   //FIELD_ALLOC(tempmat2,su2_matrix);
 
@@ -159,11 +159,11 @@ void make_fields() {
 //#endif
 
   size *= sites_on_node;
-  
+
   node0_printf("Mallocing %.1f MBytes per core for fields\n", size / 1e6);
 #ifdef PFAFF
   // Total number of matvecs is (volume * DIMF)^2 / 4
- // Nmatvecs = volume * volume * DIMF * DIMF / 4;
+  Nmatvecs = volume * volume * DIMF * DIMF / 4;
 
   // Total size of matrix is (volume * DIMF) x (sites_on_node * DIMF)
   size = (double)(volume * DIMF * sites_on_node * DIMF * sizeof(complex));
@@ -178,8 +178,6 @@ void make_fields() {
 // -----------------------------------------------------------------
 int setup() {
   int prompt;
-  printf(" In setup\n");
-
   // Print banner, get volume and seed
   prompt = initial_set();
   // Initialize the node random number generator
@@ -194,8 +192,6 @@ int setup() {
   setup_phases();
   // Allocate space for fields
   make_fields();
-
-  
 
   return prompt;
 }

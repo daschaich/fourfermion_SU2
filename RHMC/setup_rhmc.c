@@ -1259,7 +1259,6 @@ void setup_rhmc5() {
 void setup_rhmc() {
   node0_printf("Using Nroot = %d\n", Nroot);
   node0_printf("RHMC Norder %d for spectral range ", Norder);
-  node0_printf("In Setup_RHMC\n");
 
   switch(Norder) {
     case 5:
