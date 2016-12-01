@@ -16,7 +16,7 @@ nstep 5
 nstep_scalar 10
 traj_between_meas 3
 
-G 0.5
+BETA 1.0
 site_mass 0.1
 
 max_cg_iterations 5000
