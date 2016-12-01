@@ -127,6 +127,8 @@ EXTERN vector *dest;
 // Temporary vectors, matrices and Twist_Fermion
 
 EXTERN vector *tempvec;  
+EXTERN vector *tempvec1;
+EXTERN vector *tempvec2;
 
 
 EXTERN su2_matrix *tempmat;
