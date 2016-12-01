@@ -38,10 +38,9 @@ void fermion_op(vector *src, vector *dest,int sign) {
   //Real tr, link_mass;
   Real vev[DIMF][DIMF];
   vector tvec,tvec_dir, tvec_opp, tvec3,tvec4;
-  vector *chi = malloc(sites_on_node *sizeof(*chi));
-  vector *psi = malloc(sites_on_node *sizeof(*psi));
-  msg_tag *tag[3 * NDIMS];
-  //msg_tag *mtag[4];
+  
+  msg_tag *tag[2 * NDIMS];
+  msg_tag *mtag[4];
 
   // Quick sanity check
   if (sign != 1 && sign != -1) {
@@ -55,7 +54,7 @@ void fermion_op(vector *src, vector *dest,int sign) {
   vev[1][1]=0.0;
  
 
- if(sign == -1){ FORALLSITES(i,s){vec_copy(&(src[i]), &(chi[i])) ; vec_conjug(&(chi[i]),&(src[i]));}}
+ 
    
 for (dir =XUP ;dir <=TUP ; dir++){
    FORALLSITES(i,s){
@@ -79,7 +78,7 @@ for (dir = XUP; dir <= TUP; dir++) {
     tag[OPP_DIR(dir)] = start_gather_field(src, sizeof(vector), OPP_DIR(dir),
                                            EVENANDODD, gen_pt[OPP_DIR(dir)]);
 
-    tag[11-dir] = start_gather_site(F_OFFSET(temp_link[dir]), sizeof(su2_matrix),OPP_DIR(dir), EVENANDODD, gen_pt[11-dir]);
+    mtag[dir] = start_gather_site(F_OFFSET(temp_link[dir]), sizeof(su2_matrix),OPP_DIR(dir), EVENANDODD, gen_pt[11-dir]);
 }
 
 //Accumulate (m * epsilon^{ab}  \ psi^{a} \psi{b}) term as gathers run
@@ -99,7 +98,7 @@ for (dir = XUP; dir <= TUP; dir++) {
 
     wait_gather(tag[dir]);
     wait_gather(tag[OPP_DIR(dir)]);
-    wait_gather(tag[11-dir]);
+    wait_gather(mtag[dir]);
 FORALLSITES(i, s) {
       // Deal with BCs here 
       // Need to change the order of BC and matrix multiplication
@@ -122,18 +121,16 @@ FORALLSITES(i, s) {
  }
     cleanup_gather(tag[dir]);
     cleanup_gather(tag[OPP_DIR(dir)]);
-    cleanup_gather(tag[11-dir]);
+    cleanup_gather(mtag[dir]);
 }
 // Overall negative sign and conjugate for adjoint
 if (sign == -1) {
     FORALLSITES(i, s)
       scalar_mult_vec(&(dest[i]), -1.0, &(dest[i]));
-      vec_copy(&(dest[i]),&(psi[i]));
-      vec_conjug(&(psi[i]),&(dest[i]));
+     
 }
 free(m1);
-free(chi);
-free(psi);
+
 }
 // -----------------------------------------------------------------
 
@@ -145,6 +142,20 @@ free(psi);
 // Use tempvec for temporary storage
 void DSq(vector *src, vector *dest) {
   fermion_op(src, tempvec,PLUS);
-  fermion_op(tempvec,dest,MINUS); 
+  register site *s;
+  register int i;
+
+  FORALLSITES(i,s)  {
+
+   vec_conjug(&(tempvec[i]) , &(tempvec1[i]));
+
+}
+  fermion_op(tempvec1,tempvec2,MINUS);
+
+  FORALLSITES(i,s)  {
+
+   vec_conjug(&(tempvec2[i]),&(dest[i]));
+
+} 
 }
 // -----------------------------------------------------------------
