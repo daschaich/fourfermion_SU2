@@ -133,7 +133,7 @@ void make_fields() {
   FIELD_ALLOC(dest, vector);
   
 
-  // Temporary vector and
+  // Temporary vectors for use in the definition of D^2
   FIELD_ALLOC(tempvec, vector);
   FIELD_ALLOC(tempvec1, vector);
   FIELD_ALLOC(tempvec2, vector);
