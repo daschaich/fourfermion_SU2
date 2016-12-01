@@ -1,0 +1,8 @@
+*.2o
+*.a
+*.o
+*.out
+*.sw[op]
+.lastmake*
+localmake
+su2_hmc*
