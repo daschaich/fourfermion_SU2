@@ -102,7 +102,7 @@ double gauge_force(Real eps) {
 
       //Finally updating the momenta
       uncompress_anti_hermitian(&(st->mom[dir1]), &tmat2);
-      scalar_mult_add_su2_matrix(&tmat2, &tmat1, -eb3, &(st->staple));
+      scalar_mult_add_su2_matrix(&tmat2, &tmat1, eb3, &(st->staple));
       make_anti_hermitian(&(st->staple), &(st->mom[dir1]));
       norm += (double)realtrace_su2(&tmat1, &tmat1);
     }
@@ -124,7 +124,7 @@ double fermion_force(Real eps, vector *src, vector **sol){
  int n;
  Real tr;
  double norm;
- Real ferm_epsilon = -2.0* eps;
+ Real ferm_epsilon = 2.0* eps;
  complex *dum = malloc(sizeof(*dum));
  
   
